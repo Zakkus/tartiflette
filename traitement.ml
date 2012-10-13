@@ -12,10 +12,10 @@ let sdl_init () =
           
           (* attendre une touche ... *)
 let rec wait_key () =
-          let e = Sdlevent.wait_event () in
-              match e with
-                  Sdlevent.KEYDOWN _ -> ()
-                        | _ -> wait_key ()
+  let e = Sdlevent.wait_event () in
+    match e with
+       Sdlevent.KEYDOWN _ -> ()
+      | _ -> wait_key ()
 
 (*
  *   show img dst
@@ -24,9 +24,9 @@ let rec wait_key () =
  *     l'écran)
  *     *)
 let show img dst =
-          let d = Sdlvideo.display_format img in
-              Sdlvideo.blit_surface d dst ();
-                  Sdlvideo.flip dst
+  let d = Sdlvideo.display_format img in
+  Sdlvideo.blit_surface d dst ();
+  Sdlvideo.flip dst
 
 let first (a,b,c) = a
 let trip a = (a,a,a)
@@ -44,6 +44,7 @@ let image2grey src h w matr=
     done
   done
 
+
 (* Création de la surface
    à partir de la matrice *)
 let modsrf matr srf h w =
@@ -55,31 +56,74 @@ let modsrf matr srf h w =
 
 (* Fonction de comparaison
    pour le tri des Array *)
-let comp a =
-	function
-	b when a = b -> 0
-	|b when a < b -> -1
-	|_ -> 1
+let comp a = function
+  b when a = b -> 0
+ |b when a < b -> -1
+ |_ -> 1
 
 (*Supression du bruit dans la matrice *)
 let noiseOut dst h w matr=
-	let median = Array.make 9 0 in
-	for y = 1 to h -2 do
-		for x = 1 to w - 2 do
-		median.(0) <- (matr.(x-1).(y-1));
-		median.(1) <- (matr.(x).(y-1));
-		median.(2) <- (matr.(x+1).(y-1));
-		median.(3) <- (matr.(x-1).(y));
-		median.(4) <- (matr.(x).(y));
-		median.(5) <- (matr.(x+1).(y));
-		median.(6) <- (matr.(x-1).(y+1));
-		median.(7) <- (matr.(x).(y+1));
-		median.(8) <- (matr.(x+1).(y+1));
+  let median = Array.make 9 0 in
+    for y = 1 to h -2 do
+      for x = 1 to w - 2 do
+        median.(0) <- (matr.(x-1).(y-1));
+	median.(1) <- (matr.(x).(y-1));
+	median.(2) <- (matr.(x+1).(y-1));
+	median.(3) <- (matr.(x-1).(y));
+	median.(4) <- (matr.(x).(y));
+	median.(5) <- (matr.(x+1).(y));
+	median.(6) <- (matr.(x-1).(y+1));
+	median.(7) <- (matr.(x).(y+1));
+	median.(8) <- (matr.(x+1).(y+1));
 
-		Array.fast_sort comp median;
-		matr.(x).(y) <- median.(4)
-		done
-	done
+	Array.fast_sort comp median;
+	matr.(x).(y) <- median.(4)
+      done
+    done
+
+let minimum a b c d e f j i current =
+ min a
+ (min b
+ (min c
+ (min d
+ (min e
+ (min f
+ (min j
+ (min i current
+ )))))))
+
+let maximum a b c d e f j i current =
+ max a
+ (max b
+ (max c
+ (max d
+ (max e
+ (max f
+ (max j
+ (max i current
+ )))))))
+
+let binar src dest h w =
+    for y = 1 to h -2 do
+      for x = 1 to w - 2 do
+      let a = first (Sdlvideo.get_pixel_color src (x-1) (y-1)) in
+      let b = first (Sdlvideo.get_pixel_color src (x-1) (y)) in
+      let c = first (Sdlvideo.get_pixel_color src (x-1) (y+1)) in
+      let d = first (Sdlvideo.get_pixel_color src (x) (y-1)) in
+      let e = first (Sdlvideo.get_pixel_color src (x) (y+1)) in
+      let f = first (Sdlvideo.get_pixel_color src (x+1) (y-1)) in
+      let i = first (Sdlvideo.get_pixel_color src (x+1) (y)) in
+      let j = first (Sdlvideo.get_pixel_color src (x+1) (y+1)) in 
+      let current = first (Sdlvideo.get_pixel_color src x y) in
+      let min = minimum a b c d e f i j current in
+      let max = maximum a b c d e f i j current in
+      if 127 > ((min + max)/2) then
+        Sdlvideo.put_pixel_color dest x y (0,0,0)
+      else
+	Sdlvideo.put_pixel_color dest x y (255,255,255)
+    done
+  done
+
 
 (* main *)
 let main () =
@@ -100,6 +144,10 @@ let main () =
   let ndisp = Sdlvideo.create_RGB_surface_format img [] w h in 
   (*bruit*)
   let bdisp = Sdlvideo.create_RGB_surface_format img [] w h in 
+ 
+ (*binarisation*)
+  let binardisp = Sdlvideo.create_RGB_surface_format img [] w h in 
+
 
   (*creMatr1 img matrO w h;*)
   (* on affiche l'image *)
@@ -116,9 +164,18 @@ let main () =
   modsrf matr bdisp h w;(*création de la surface*)
   show bdisp display;(*affichage*)
   wait_key();
+
+
+  binar bdisp binardisp h w;
+  show binardisp display;
+  wait_key ();
+
+
+
+
       (* on quitte *)
-      exit 0
-     end
+   exit 0
+  end
 
 
 let _ = main ()
