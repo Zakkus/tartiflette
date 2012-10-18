@@ -103,7 +103,18 @@ let maximum a b c d e f j i current =
  (max i current
  )))))))
 
-let binar src dest h w =
+let binar_1 src h w matr =
+  for y = 1 to h - 2 do
+    for x = 1 to w - 2 do
+      let current = first (Sdlvideo.get_pixel_color src x y) in
+      if 180 > current  then
+        matr.(x).(y) <- (0) (*noir*)
+      else
+        matr.(x).(y) <- current
+    done
+  done
+
+(*let binar src dest h w =
     for y = 1 to h -2 do
       for x = 1 to w - 2 do
       let a = first (Sdlvideo.get_pixel_color src (x-1) (y-1)) in
@@ -117,23 +128,36 @@ let binar src dest h w =
       let current = first (Sdlvideo.get_pixel_color src x y) in
       let min = minimum a b c d e f i j current in
       let max = maximum a b c d e f i j current in
-      if 180 > ((min + max)/2) then
-        Sdlvideo.put_pixel_color dest x y (0,0,0)
+      if 127 > ((min + max)/2) then
+        Sdlvideo.put_pixel_color dest x y (0,0,0) (*noir*)
       else
-	Sdlvideo.put_pixel_color dest x y (255,255,255)
+	Sdlvideo.put_pixel_color dest x y (255,255,255) (*blanc*)
+    done
+  done
+*)
+
+let binar src dest h w = (*-7 à +7*)
+  let small = ref (first (Sdlvideo.get_pixel_color src (0) (0))) in
+  let big =  ref !small in 
+  let current = ref (125) in 
+  for y = 7 to h - 8 do
+    for x = 7 to w - 8 do
+    current := first (Sdlvideo.get_pixel_color src (x) (y));
+      for j = -7 to 7 do
+        for i = -7 to 7 do
+        if !small > !current then
+        small := !current
+        else if !big < !current then
+        big := !current
+        done
+      done;
+    if !current < ((!small + !big)/2) then
+        Sdlvideo.put_pixel_color dest x y (0,0,0) (*noir*)
+    else
+	Sdlvideo.put_pixel_color dest x y (255,255,255) (*blanc*)
     done
   done
 
-(*let binar src dest h w =
-for i=0 to w-1 do
-for j =0 to h-1 do
-if level (Sdlvideo.get_pixel_color src i j) < 127 then
-Sdlvideo.put_pixel_color dest i j (0,0,0)
-else
-Sdlvideo.put_pixel_color dest i j (255,255,255)
-done
-done
-*)
 
 (* main *)
 let main () =
@@ -158,7 +182,7 @@ let main () =
  
  (*binarisation*)
   let binardisp = Sdlvideo.create_RGB_surface_format img [] w h in 
-
+  let binardsp = Sdlvideo.create_RGB_surface_format img [] w h in
 
   (*creMatr1 img matrO w h;*)
   (* on affiche l'image *)
@@ -171,16 +195,23 @@ let main () =
   show ndisp display;(*affichage*)
   wait_key ();
 
-  noiseOut ndisp h w matr nmatr;(*modif matrice*)
+  (*noiseOut ndisp h w matr nmatr;(*modif matrice*)
   modsrf nmatr bdisp h w;(*création de la surface*)
   show bdisp display;(*affichage*)
-  wait_key();
+  wait_key();*)
 
-  binar bdisp binardisp h w;
+
+  (*Pré-binarisation avec seuil local*)
+  binar_1 (*b*)ndisp h w (*n*)matr;
+  modsrf (*n*)matr binardisp h w;
   show binardisp display;
   wait_key ();
 
-
+  (*binarisation*)
+  binar binardisp binardsp h w;
+  show binardsp display;
+  wait_key ();
+  Sdlvideo.save_BMP binardsp "prout.bmp";
 
 
       (* on quitte *)
