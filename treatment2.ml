@@ -175,7 +175,7 @@ let main () =
   let (w,h) = get_dims img in
   let matr = Array.make_matrix w h 0 in
   let nmatr = Array.make_matrix w h 0 in
-  let tmpmatr = Array.make_matrix w h 0 in  
+  let tmpmatr = Array.make_matrix w h 255 in  
   (* On crée la surface d'affichage en doublebuffering *)
   let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
   (*niveau de gris*)
