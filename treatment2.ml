@@ -167,7 +167,8 @@ let main () =
     (* Nous voulons 1 argument *)
   if Array.length (Sys.argv) < 2 then
     failwith "Il manque le nom du fichier!";
-    (* Initialisation de SDL *)
+
+  (* Initialisation de SDL *)
   sdl_init ();
     (* Chargement d'une image *)
   let img = Sdlloader.load_image Sys.argv.(1) in
@@ -175,7 +176,7 @@ let main () =
   let (w,h) = get_dims img in
   let matr = Array.make_matrix w h 0 in
   let nmatr = Array.make_matrix w h 0 in
-  let tmpmatr = Array.make_matrix w h 0 in  
+  let tmpmatr = Array.make_matrix w h 255 in  
   (* On crée la surface d'affichage en doublebuffering *)
   let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
   (*niveau de gris*)
@@ -183,7 +184,7 @@ let main () =
   (*bruit*)
   let bdisp = Sdlvideo.create_RGB_surface_format img [] w h in 
  
- (*binarisation*)
+  (*binarisation*)
   let binardisp = Sdlvideo.create_RGB_surface_format img [] w h in 
 
   (*creMatr1 img matrO w h;*)
@@ -209,8 +210,11 @@ let main () =
   modsrf tmpmatr binardisp h w;
   show binardisp display;
   wait_key ();
-  Sdlvideo.save_BMP binardisp "prout.bmp";
-
+  (*let name = Sys.argv.(1);
+  name.[(length - 3)] <- 'b';
+  name.[(length - 2)] <- 'm'
+  name.[(1)] <- 'p';*)
+  Sdlvideo.save_BMP binardisp Sys.argv.(1);
 
       (* on quitte *)
    exit 0
