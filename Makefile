@@ -2,8 +2,8 @@ OCAML=ocamlopt
 OCAMLFLAGS= -I +sdl
 OCAMLLD= bigarray.cmxa sdl.cmxa sdlloader.cmxa
  
-tpsdl: traitement.ml
-		${OCAML} ${OCAMLFLAGS} ${OCAMLLD} -o ocr traitement.ml
+ocr: treatment2.ml
+		${OCAML} ${OCAMLFLAGS} ${OCAMLLD} -o ocr treatment2.ml
 		 
 clean::
 		rm -f *~ *.o *.cm? ocr

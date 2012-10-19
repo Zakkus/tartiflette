@@ -10,7 +10,7 @@ let sdl_init () =
     Sdlevent.enable_events Sdlevent.all_events_mask;
   end
           
-          (* attendre une touche ... *)
+     (* attendre une touche ... *)
 let rec wait_key () =
   let e = Sdlevent.wait_event () in
     match e with
@@ -40,7 +40,7 @@ let image2grey src h w matr=
   for y = 0 to h-1 do
     for x = 0 to w-1 do
       let tmp = Sdlvideo.get_pixel_color src x y in
-      matr.(x).(y) <- first(trip(level tmp));
+      matr.(x).(y) <- (level tmp);
     done
   done
 
@@ -103,17 +103,6 @@ let maximum a b c d e f j i current =
  (max i current
  )))))))
 
-let binar_1 src h w matr =
-  for y = 1 to h - 2 do
-    for x = 1 to w - 2 do
-      let current = first (Sdlvideo.get_pixel_color src x y) in
-      if 180 > current  then
-        matr.(x).(y) <- (0) (*noir*)
-      else
-        matr.(x).(y) <- current
-    done
-  done
-
 (*let binar src dest h w =
     for y = 1 to h -2 do
       for x = 1 to w - 2 do
@@ -136,44 +125,58 @@ let binar_1 src h w matr =
   done
 *)
 
-let binar src dest h w = (*-7 à +7*)
-  let small = ref (first (Sdlvideo.get_pixel_color src (0) (0))) in
-  let big =  ref !small in 
-  let current = ref (125) in 
-  for y = 7 to h - 8 do
-    for x = 7 to w - 8 do
-    current := first (Sdlvideo.get_pixel_color src (x) (y));
-      for j = -7 to 7 do
-        for i = -7 to 7 do
-        if !small > !current then
-        small := !current
-        else if !big < !current then
-        big := !current
-        done
-      done;
-    if !current < ((!small + !big)/2) then
-        Sdlvideo.put_pixel_color dest x y (0,0,0) (*noir*)
-    else
-	Sdlvideo.put_pixel_color dest x y (255,255,255) (*blanc*)
+
+let binar_1 src h w matr =
+  for y = 1 to h - 2 do
+    for x = 1 to w - 2 do  
+      if 180 > matr.(x).(y)  then
+        matr.(x).(y) <- (0) (*noir*)
     done
   done
 
+let binar h w oldmatr newmatr = (*-7 à +7*)
+  let small = ref 255 in
+  let big =  ref !small in 
+  let current = ref (125) in
+  let moving = ref 125 in
+
+  for y = 7 to h - 8 do
+    for x = 7 to w - 8 do
+     if 180 > oldmatr.(x).(y) then
+    oldmatr.(x).(y) <- 0;
+    current := oldmatr.(x).(y);
+      for j = -7 to 7 do
+        for i = -7 to 7 do
+        moving := oldmatr.(x+i).(y+j);
+        if !small > !moving then
+        small := !moving
+        else if !big < !moving then
+        big := !moving
+        done
+      done;
+    if !current < ((!small + !big)/2) then
+	newmatr.(x).(y) <- (0) (*noir*)
+    else
+	newmatr.(x).(y) <- (255) (*blanc*)
+    done
+done
 
 (* main *)
 let main () =
   begin
     (* Nous voulons 1 argument *)
-    if Array.length (Sys.argv) < 2 then
-      failwith "Il manque le nom du fichier!";
+  if Array.length (Sys.argv) < 2 then
+    failwith "Il manque le nom du fichier!";
     (* Initialisation de SDL *)
-    sdl_init ();
+  sdl_init ();
     (* Chargement d'une image *)
-    let img = Sdlloader.load_image Sys.argv.(1) in
+  let img = Sdlloader.load_image Sys.argv.(1) in
     (* On récupère les dimensions *)
-    let (w,h) = get_dims img in
-    let matr = Array.make_matrix w h 0 in
+  let (w,h) = get_dims img in
+  let matr = Array.make_matrix w h 0 in
   let nmatr = Array.make_matrix w h 0 in
-    (* On crée la surface d'affichage en doublebuffering *)
+  let tmpmatr = Array.make_matrix w h 0 in  
+  (* On crée la surface d'affichage en doublebuffering *)
   let display = Sdlvideo.set_video_mode w h [`DOUBLEBUF] in
   (*niveau de gris*)
   let ndisp = Sdlvideo.create_RGB_surface_format img [] w h in 
@@ -182,36 +185,31 @@ let main () =
  
  (*binarisation*)
   let binardisp = Sdlvideo.create_RGB_surface_format img [] w h in 
-  let binardsp = Sdlvideo.create_RGB_surface_format img [] w h in
 
   (*creMatr1 img matrO w h;*)
   (* on affiche l'image *)
-   show img display;
+  show img display;
   (* on attend une touche *)
   wait_key ();
   
+  (*grey*)
   image2grey img h w matr; (*modif de la matrice *)
   modsrf matr ndisp h w;(*création de la surface*)
   show ndisp display;(*affichage*)
   wait_key ();
 
-  (*noiseOut ndisp h w matr nmatr;(*modif matrice*)
+  (*bruit*)
+  noiseOut ndisp h w matr nmatr;(*modif matrice*)
   modsrf nmatr bdisp h w;(*création de la surface*)
   show bdisp display;(*affichage*)
-  wait_key();*)
-
-
-  (*Pré-binarisation avec seuil local*)
-  binar_1 (*b*)ndisp h w (*n*)matr;
-  modsrf (*n*)matr binardisp h w;
-  show binardisp display;
-  wait_key ();
+  wait_key();
 
   (*binarisation*)
-  binar binardisp binardsp h w;
-  show binardsp display;
+  binar h w nmatr tmpmatr;(*Sans le bruit changer "nmatr" par "matr"*)
+  modsrf tmpmatr binardisp h w;
+  show binardisp display;
   wait_key ();
-  Sdlvideo.save_BMP binardsp "prout.bmp";
+  Sdlvideo.save_BMP binardisp "prout.bmp";
 
 
       (* on quitte *)
