@@ -81,6 +81,28 @@ let noiseOut dst h w matr nmatr=
       done
     done
 
+(*Supression du bruit dans la matrice avec coef*)
+let noiseOutcoef dst h w matr nmatr=
+  let add = ref 0 in
+    for y = 1 to h -2 do
+      for x = 1 to w - 2 do
+        add := !add + (matr.(x-1).(y-1));
+	add := !add + (matr.(x).(y-1))*2;
+	add := !add + (matr.(x+1).(y-1));
+	add := !add + (matr.(x-1).(y))*2;
+	add := !add + (matr.(x).(y))*4;
+	add := !add + (matr.(x+1).(y))*2;
+	add := !add + (matr.(x-1).(y+1));
+	add := !add + (matr.(x).(y+1))*2;
+	add := !add + (matr.(x+1).(y+1));
+
+	add := (!add / 16);
+	nmatr.(x).(y) <- !add;
+        add := 0;
+      done
+    done
+
+
 let minimum a b c d e f j i current =
  min a
  (min b
@@ -103,7 +125,7 @@ let maximum a b c d e f j i current =
  (max i current
  )))))))
 
-(*let binar src dest h w =
+let binar src dest h w =
     for y = 1 to h -2 do
       for x = 1 to w - 2 do
       let a = first (Sdlvideo.get_pixel_color src (x-1) (y-1)) in
@@ -123,7 +145,7 @@ let maximum a b c d e f j i current =
 	Sdlvideo.put_pixel_color dest x y (255,255,255) (*blanc*)
     done
   done
-*)
+
 
 
 let binar_1 src h w matr =
@@ -134,7 +156,33 @@ let binar_1 src h w matr =
     done
   done
 
-let binar h w oldmatr newmatr = (*-7 à +7*)
+let binar1 h w oldmatr newmatr = (*-1 à +1*)
+  let small = ref 255 in
+  let big =  ref !small in 
+  let current = ref 125 in
+  let moving = ref 125 in
+
+  for y = 1 to h - 2 do
+    for x = 1 to w - 2 do
+    current := oldmatr.(x).(y);
+      for j = -1 to 1 do
+        for i = -1 to 1 do
+        moving := oldmatr.(x+i).(y+j);
+        if !small > !moving then
+        small := !moving
+        else if !big < !moving then
+        big := !moving
+        done
+      done;
+    if !current < ((!small + !big)/2)+20 then
+	newmatr.(x).(y) <- (0) (*noir*)
+    else
+	newmatr.(x).(y) <- (255) (*blanc*)
+    done
+done
+
+
+let binar2 h w oldmatr newmatr = (*-7 à +7*)
   let small = ref 255 in
   let big =  ref !small in 
   let current = ref (125) in
@@ -161,11 +209,12 @@ let binar h w oldmatr newmatr = (*-7 à +7*)
     done
 done
 
+
 (* main *)
 let main () =
-  begin
+  begin 
     (* Nous voulons 1 argument *)
-  if Array.length (Sys.argv) < 2 then
+  if Array.length (Sys.argv) < 3 then
     failwith "Il manque le nom du fichier!";
 
   (* Initialisation de SDL *)
@@ -200,24 +249,22 @@ let main () =
   wait_key ();
 
   (*bruit*)
-  noiseOut ndisp h w matr nmatr;(*modif matrice*)
+  noiseOutcoef ndisp h w matr nmatr;(*modif matrice*)
   modsrf nmatr bdisp h w;(*création de la surface*)
   show bdisp display;(*affichage*)
   wait_key();
 
   (*binarisation*)
-  binar h w nmatr tmpmatr;(*Sans le bruit changer "nmatr" par "matr"*)
+  binar1 h w nmatr tmpmatr;(*Sans le bruit changer "nmatr" par "matr"*)
   modsrf tmpmatr binardisp h w;
   show binardisp display;
   wait_key ();
-  (*let name = Sys.argv.(1);
-  name.[(length - 3)] <- 'b';
-  name.[(length - 2)] <- 'm'
-  name.[(1)] <- 'p';*)
-  Sdlvideo.save_BMP binardisp Sys.argv.(1);
+
+
+  Sdlvideo.save_BMP binardisp Sys.argv.(2);
 
       (* on quitte *)
-   exit 0
+   (*exit 0*)
   end
 
 
