@@ -258,7 +258,6 @@ let main () =
   binar1 h w nmatr tmpmatr;(*Sans le bruit changer "nmatr" par "matr"*)
   modsrf tmpmatr binardisp h w;
   show binardisp display;
-  wait_key ();
 
 
   Sdlvideo.save_BMP binardisp Sys.argv.(2);
