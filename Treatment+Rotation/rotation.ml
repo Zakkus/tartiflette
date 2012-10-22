@@ -9,9 +9,6 @@ let sdl_init () =
 let get_dims img =
   ((Sdlvideo.surface_info img).Sdlvideo.w, (Sdlvideo.surface_info img).Sdlvideo.h)
 
-(*Sauvegarde de l'image*)
-let save image = Sdlvideo.save_BMP image Sys.argv.(1)
-
 (*
  *   show img dst
  *     affiche la surface img sur la surface 
@@ -129,12 +126,12 @@ let rotate img angle  =
 let main () =
   begin
     (* We want 1 argument *)
-    if Array.length (Sys.argv) < 2 then
+    if Array.length (Sys.argv) < 3 then
       failwith "Il manque le nom du fichier!";
     (* Initialisation of SDL *)
     sdl_init ();
     (* Loading of an image *)
-    let img = Sdlloader.load_image Sys.argv.(1) in
+    let img = Sdlloader.load_image Sys.argv.(2) in
     (* Get dimensions *)
     let (w,h) = get_dims img in
     (* Creation of display surface in doublebuffering *)
@@ -150,7 +147,7 @@ let main () =
       (*Wait key *)
       wait_key();
       (* Save rotate image*)
-      save img_rotate;
+      Sdlvideo.save_BMP img_rotate Sys.argv.(2);
       (* on quitte *)
       exit 0
   end
