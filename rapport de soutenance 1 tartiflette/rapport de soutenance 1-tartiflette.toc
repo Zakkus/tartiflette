@@ -6,14 +6,14 @@
 \contentsline {subsection}{\numberline {2.3}}{4}
 \contentsline {subsection}{\numberline {2.4}}{4}
 \contentsline {section}{\numberline {3}Pr\IeC {\'e}traitement de l'image}{4}
-\contentsline {subsection}{\numberline {3.1}Matrices}{4}
+\contentsline {subsection}{\numberline {3.1}Matrices}{5}
 \contentsline {subsection}{\numberline {3.2}Niveau de gris}{5}
-\contentsline {subsection}{\numberline {3.3}Effacement de bruit}{5}
-\contentsline {subsection}{\numberline {3.4}Binarisation}{6}
-\contentsline {section}{\numberline {4}D\IeC {\'e}tection d'angle et rotation}{6}
-\contentsline {section}{\numberline {5}D\IeC {\'e}tection des Caract\IeC {\`e}res}{8}
-\contentsline {subsection}{\numberline {5.1}D\IeC {\'e}tection des blocs de texte}{8}
-\contentsline {subsection}{\numberline {5.2}D\IeC {\'e}tection des caract\IeC {\`e}res (des lettres)}{9}
-\contentsline {subsection}{\numberline {5.3}Encadrement des caract\IeC {\`e}res}{10}
-\contentsline {section}{\numberline {6}Le site web}{11}
-\contentsline {section}{\numberline {7}En conclusion}{11}
+\contentsline {subsection}{\numberline {3.3}Effacement de bruit}{6}
+\contentsline {subsection}{\numberline {3.4}Binarisation}{8}
+\contentsline {section}{\numberline {4}D\IeC {\'e}tection d'angle et rotation}{9}
+\contentsline {section}{\numberline {5}D\IeC {\'e}tection des Caract\IeC {\`e}res}{13}
+\contentsline {subsection}{\numberline {5.1}D\IeC {\'e}tection des blocs de texte}{13}
+\contentsline {subsection}{\numberline {5.2}D\IeC {\'e}tection des caract\IeC {\`e}res (des lettres)}{14}
+\contentsline {subsection}{\numberline {5.3}Encadrement des caract\IeC {\`e}res}{15}
+\contentsline {section}{\numberline {6}Le site web}{16}
+\contentsline {section}{\numberline {7}En conclusion}{19}

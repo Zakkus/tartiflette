@@ -59,6 +59,11 @@ J'ai commencé a m'intéresser à l'informatique à partir de la seconde à trav
 
 \section{Prétraitement de l'image}
 
+Cette image sera prise comme exemple au cours de cette partie:
+\\
+\begin{center} \includegraphics[scale=0.7]{Lena1.PNG} \end{center}.
+\\
+
 \subsection{Matrices}
 
 Pour traiter les images plus facilement dans cette partie nous avons choisies de d’appliquer chaque image à une matrice ou chaque élément de cette matrices sera représentatif d’un pixel avec sa valeur RGB.
@@ -68,6 +73,11 @@ Pour traiter les images plus facilement dans cette partie nous avons choisies de
 La mise à niveau de gris va nous servir à mieux traiter l’image lors des prochaines étapes. Le but est de passer chaque pixel à une teinte entre noir et blanc.  La formule pour calculer le niveau de gris est la suivante :
 	\\Gris = 0,299 * Rouge + 0,587 * Vert + 0,114 * Bleu
 	\\Cette valeur remplace ainsi les trois champs RGB de chaque pixels. A partir de ce moment nous pouvons comparer deux pixels puisqu’ils ont tous les qu’une seule valeur pour les représenter.
+\\
+Image mise en niveau de gris:
+\\
+\begin{center} \includegraphics[scale=0.7]{Lena2.PNG} \end{center}.
+\\
 
 \subsection{Effacement de bruit}
 
@@ -80,6 +90,11 @@ Le but de cette étape est éliminer toutes les petites imperfections de l’ima
 La somme des coefficients est de 16, nous allons donc diviser le résultat obtenu par 16 pour le rapporter à un nombre entre 0 et 255. Cette valeur est donc la nouvelle valeur de gris de pixel.
 \\
 	Il faut ensuite appliquer à cet algorithme pour chaque pixel et appliquer le résultats sur une nouvelle matrice pour éviter de contaminer le calcul des prochains pixels.
+\\
+Image avec l'effacement de bruit:
+\\
+\begin{center} \includegraphics[scale=0.7]{Lena3.PNG} \end{center}.
+\\
 
 \subsection{Binarisation}
 
@@ -87,8 +102,17 @@ La binarisation consiste à passer l’image en noir et blanc. Pour obtenir un r
 	\\Il y a plusieurs façon de calculer le seuil, la plus grosse différence est de choisir le nombre de pixel que nous voulons étudier. La méthode est plutôt simple, il suffit de parcourir tous les pixels autour de l’image et de ne garder que celui avec la plus faible valeur et celui avec la plus grande. On fait ensuite la somme des deux que l’on divise par deux et on compare le résultat au pixel étudié. Si le pixel a une plus grande valeur, on le passe en blanc, sinon on le met en noir.
  \\Nous avons longuement hésité entre prendre les 8 pixels autours du pixel étudié ou de prendre les 49. Après avoir comparé les résultats sur de nombreuses images nous avons décidé d’utiliser 8 pixels parce que cela nous donna de meilleurs résultats sur des images avec une plus faible dimension.
 \\
+Image Binarisée:
 \\
+\begin{center} \includegraphics[scale=0.7]{Lena4.PNG} \end{center}.
+\\
+
 \section{Détection d'angle et rotation}
+
+Image binarisée avant rotation:
+\\
+\begin{center} \includegraphics[scale=0.3]{Screenshot_2_Binarisation.png} \end{center}.
+\\
 
 Tout d'abord, pour aborder la rotation d'un document scanné qui est penché d'un certain angle, il faut préciser que ce travail va se faire en deux étapes. 
 \\En premier temps, il y a la détection de l'angle de rotation pour pouvoir redressé le document. Pour ce faire on a implémenté la transformée de Hough, inventée par Paul Hough en 1962 pour la reconnaissance des formes dans le traitement d'image. Même si celle ci malheureusement, ne donne pas encore les bonnes valeurs.
@@ -109,6 +133,11 @@ Le but de cette transformée étant de déterminer lesquelles de ces droites pas
 \\
 
 Concrétement, on crée une matrice dite de “vote” où l’on déterminera combien de points passent par tel ou tel angle theta. Ensuite on parcours notre image, et pour chaque pixel noir, on va dans un premier temps définir theta, que l’on fera varier dans une grosse plage d’angle. Puis on calcule rho, s’il est positif on rajoute 1 au vote de coordonnées (theta, rho) dans la matrice de vote, sinon on ne le prend pas en compte. Et au moment où l’on ajoute un vote, on enregistre le vote le plus grand rencontré. On se retrouve donc à la fin avec l’angle le plus probable à  utiliser pour la rotation pour obtenir un texte horizontale.
+\\
+Image binarisée après rotation:
+\\
+\begin{center} \includegraphics[scale=0.3]{Screenshot_2_Rotation.png} \end{center}.
+\\
 \\
 \\
 \\
@@ -139,6 +168,11 @@ La fusion :
                     sinon, on met le pixel courant de l'image résultant en blanc.
 \\
 Le résultat final est une image composée uniquement de blocs noirs représentant les zones de texte.
+\\
+Image avec détection des lignes:
+\\
+\begin{center} \includegraphics[scale=0.3]{Screenshot_1_DettectionDesLignes.png} \end{center}.
+\\
 
 \subsection{Détection des caractères (des lettres)}
 
@@ -200,11 +234,42 @@ La fusion négative :
                     sinon, on met le pixel courant de l'image résultant en noir.
 \\
 		Le résultat final est une image composé du texte d'origine... mais dont les caractères sont encadrés !
+\\
+Image avec détection des caractères:
+\\
+\begin{center} \includegraphics[scale=0.3]{Screenshot_1_DetectionDesCaracteres.png} \end{center}.
+\\
 
 \section{Le site web}
 
 Pour le site web au début, nous voulions le faire nous même ce qui aurait pu être une bonne expérience sachant qu’aucun de nous n’en avait jamais fait, même si nous avions quelques bases. Mais après réflexion nous avons décider de faire un wordpress, parce que nous nous sommes rappelé que le projet tartiflette n’avait pas pour but d’apprendre à faire un site web mais plutôt d’apprendre à faire un logiciel de reconnaissance de caractères optique. Et que par conséquent il n’aurait pas été judicieux de passer plus de temps sur le site web que sur le projet en lui-même puisque nous n'avions jamais fait d'OCR.
-
+\\
+\\
+Image de l'accueil du site web:
+\\
+\begin{center} \includegraphics[scale=0.3]{accueil_site_web.png} \end{center}.
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+Image de la page à propos du site web:
+\\
+\begin{center} \includegraphics[scale=0.3]{A_propos_Site_web.png} \end{center}.
+\\
+Image de l'historique du site web:
+\\
+\begin{center} \includegraphics[scale=0.3]{Historique_Site_web.png} \end{center}.
+\\
 \section{En conclusion}
 
 Pour cette première soutenance, nous avons posé les base de notre logiciel de reconnaissance de caractères optique. Mais nous devons désormais faire le plus gros du travail, qui est le réseau de neurones pour l’apprentissage de l’écriture, ainsi que la détection de l’ordre du texte. Une IHM (Interface Homme Machine) sera également intégré au projet pour faciliter son utilisation.
