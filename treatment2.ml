@@ -9,8 +9,6 @@ let sdl_init () =
     Sdl.init [`EVERYTHING];
     Sdlevent.enable_events Sdlevent.all_events_mask;
   end
-
-  let save link = Sdlvideo.save_BMP (Sdlloader.load_image link) ("./result.bmp")
           
      (* attendre une touche ... *)
 let rec wait_key () =
