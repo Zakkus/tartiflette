@@ -345,6 +345,20 @@ for y = 0 to h -1 do
   done
 done
 
+let resize old_h old_w new_h new_w oldmatr =
+let rat_x = (float)old_w /. (float)new_w in
+let rat_y = (float)old_h /. (float)new_h in
+let new_matr = Array.make_matrix new_w new_h 0 in
+for y = 0 to new_h -1 do
+  for x = 0 to new_w -1 do
+    let tmp_x = int_of_float((float)x *. rat_x) in
+    let tmp_y = int_of_float((float)y *. rat_y) in
+      new_matr.(x).(y) <- oldmatr.(tmp_x).(tmp_y);
+  done
+done;
+new_matr
+(*let matrsize = resize h w 300 300 tmpmatr in*)
+
 (* main *)
 let main () =
   begin
@@ -374,8 +388,10 @@ let main () =
   let charmatr = Array.make_matrix w h 0 in
   let finalmatr = Array.make_matrix w h 0 in
   let contmatrim = Array.make_matrix w h 0 in
+  let matrpnts = Array.make_matrix w h 0 in
   (*let max = ref 0 in*)
   let size = ref 0 in
+  let tmpsize = ref 0 in
   show img display;
   wait_key ();
 
@@ -408,10 +424,14 @@ let main () =
   wait_key ();
 
   copymatr matra matrori w h;
+ 
+  (*Passage verti pour detecter les points sur les 'i' ou '?' etc.*)
+  verti_2 matra matrpnts w h 15;
 
   (*Traitement des textes*)
   (*Detect les coefs sur fmatr*)
-  size := detec matrori fmatr w h;
+  tmpsize := !size;
+  size := detec (*matrori*)matrpnts fmatr w h;
   let cont = Array.make (!size +1)  (w-1,h-1,0,0) in
   (*contour des charac dans un Array*)
   charac cont fmatr w h;
