@@ -118,7 +118,7 @@ let _open =
     button
 
 (*ZONE A MODIFIER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: remplacer par les fonctions codées avant *)
-let grey_array _ = Treatment2.image2grey !file 800 600 image;(* voici un exemple!!42424242*)
+(*let grey_array _ = Treatment2.image2grey !file 800 600 image;(* voici un exemple!!42424242*)
   		file := ("./Imagetreated.bmp");
 		image#clear ();
 		image#set_file !file; ()
@@ -141,12 +141,12 @@ let binarize _ = ;
 let line _ = ;
 	     file := ("./Imagetreated.bmp");
              image#clear ();
-             image#set_file !file; ()
+             image#set_file !file; ()*)
 let save _ = Treatment2.save !file ; ()
 let processtext _ = 
      window2#show (); ()
 
-let all _ =  grey_array () ; noise ()  ; binarize ();rotate (); line (); ()
+(*let all _ =  grey_array () ; noise ()  ; binarize ();rotate (); line (); ()*)
  
 (*Bouton niveau de gris*)
 let grey =
